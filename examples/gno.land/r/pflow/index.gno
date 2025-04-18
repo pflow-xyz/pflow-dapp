@@ -27,5 +27,19 @@ var newSource = `<gno-mark>
 </gno-mark>`
 
 func Render(path string) string {
-    return "## GnoMark Demo: Interactive Petri-net\n\n"+newSource
+    //return "## GnoMark Demo: Interactive Petri-net\n\n"+newSource
+    return "```mermaid\n\n"+diagram+"\n```\n\n## GnoMark Demo: Interactive Petri-net\n\n" + newSource
+
 }
+const diagram = `
+sequenceDiagram
+    participant Customer
+    participant Barista
+
+    Customer->>+Barista: I'd like to order a coffee
+    Barista-->>-Customer: Your order is being prepared
+    Barista->>+CoffeeMachine: Start brewing coffee
+    CoffeeMachine-->>-Barista: Coffee is ready
+    Barista->>+Customer: Here is your coffee
+    Customer-->>-Barista: Thank you! (makes payment)
+`

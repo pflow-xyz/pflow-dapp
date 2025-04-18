@@ -69,7 +69,8 @@ func StaticHeaderDevLinks(u weburl.GnoURL, handle string) []HeaderLink {
 
 	switch handle {
 	case "p":
-		// Will have docs soon
+	case "r":
+		// No actions for prefix
 
 	default:
 		links = append(links, HeaderLink{

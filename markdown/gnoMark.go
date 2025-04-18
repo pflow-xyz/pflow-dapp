@@ -3,6 +3,7 @@ package markdown
 import (
 	"bytes"
 	"encoding/json"
+	"go.abhg.dev/goldmark/mermaid"
 	"strings"
 
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
@@ -163,6 +164,16 @@ type GnoMarkExtension struct {
 }
 
 func (e *GnoMarkExtension) Extend(m goldmark.Markdown) {
+	mm := mermaid.Extender{
+		RenderMode:   0,
+		Compiler:     nil,
+		CLI:          nil,
+		MermaidURL:   "",
+		ContainerTag: "",
+		NoScript:     false,
+		Theme:        "",
+	}
+	mm.Extend(m)
 	m.Parser().AddOptions(parser.WithBlockParsers(
 		util.Prioritized(&gnoMarkParser{}, 500),
 	))
