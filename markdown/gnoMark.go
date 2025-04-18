@@ -3,11 +3,9 @@ package markdown
 import (
 	"bytes"
 	"encoding/json"
-	"go.abhg.dev/goldmark/mermaid"
 	"strings"
 
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
-	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer"
@@ -155,29 +153,4 @@ func (r *gnoMarkRenderer) renderGnoMarkBlock(w util.BufWriter, source []byte, no
 	_, _ = w.WriteString(template(jsonContent))
 
 	return ast.WalkContinue, nil
-}
-
-// GnoMarkExtension is the Goldmark extension adding block parsers and renderers
-// for GnoMark blocks: <gno-mark>...</gno-mark>
-type GnoMarkExtension struct {
-	Client *gnoweb.HTMLWebClient
-}
-
-func (e *GnoMarkExtension) Extend(m goldmark.Markdown) {
-	mm := mermaid.Extender{
-		RenderMode:   0,
-		Compiler:     nil,
-		CLI:          nil,
-		MermaidURL:   "",
-		ContainerTag: "",
-		NoScript:     false,
-		Theme:        "",
-	}
-	mm.Extend(m)
-	m.Parser().AddOptions(parser.WithBlockParsers(
-		util.Prioritized(&gnoMarkParser{}, 500),
-	))
-	m.Renderer().AddOptions(renderer.WithNodeRenderers(
-		util.Prioritized(&gnoMarkRenderer{client: e.Client}, 500),
-	))
 }

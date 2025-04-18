@@ -6,10 +6,10 @@ import (
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb/components"
 	"github.com/gnolang/gno/tm2/pkg/bft/rpc/client"
-	"github.com/yuin/goldmark"
-	mdhtml "github.com/yuin/goldmark/renderer/html"
 	handler "github.com/pflow-xyz/pflow-dapp/handler"
 	"github.com/pflow-xyz/pflow-dapp/markdown"
+	"github.com/yuin/goldmark"
+	mdhtml "github.com/yuin/goldmark/renderer/html"
 	"log/slog"
 	"net/http"
 	"path"
@@ -138,7 +138,7 @@ func setupGnoWebServer(logger *slog.Logger, cfg *AppConfig, remoteAddr string) (
 	}
 
 	appcfg := gnoweb.NewDefaultAppConfig()
-	appcfg.UnsafeHTML = cfg.webHTML
+	appcfg.UnsafeHTML = true //cfg.webHTML
 	appcfg.NodeRemote = remoteAddr
 	appcfg.ChainID = cfg.chainId
 	if cfg.webRemoteHelperAddr != "" {

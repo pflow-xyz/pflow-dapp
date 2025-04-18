@@ -1,8 +1,6 @@
 package pflow
 
-var newSource = `<gno-mark>
-
-{
+var modelJson = `{
   "gnoMark": "petrinet",
   "modelType": "PetriNet",
   "version": "v1",
@@ -23,14 +21,18 @@ var newSource = `<gno-mark>
     { "source": "place0", "target": "txn3", "weight": [1], "inhibit": true }
   ]
 }
+`
 
-</gno-mark>`
+
+var newSource = "<gno-mark>\n\n" + modelJson + "\n" + "</gno-mark>\n\n"
 
 func Render(path string) string {
-    //return "## GnoMark Demo: Interactive Petri-net\n\n"+newSource
-    return "```mermaid\n\n"+diagram+"\n```\n\n## GnoMark Demo: Interactive Petri-net\n\n" + newSource
-
+    return "![profile](http://stackdump.com/profile.jpg)" + "\n\n"+
+    welcomeMessage //+ newSource
 }
+
+
+// This is a simple sequence diagram for a coffee ordering process
 const diagram = `
 sequenceDiagram
     participant Customer
@@ -42,4 +44,19 @@ sequenceDiagram
     CoffeeMachine-->>-Barista: Coffee is ready
     Barista->>+Customer: Here is your coffee
     Customer-->>-Barista: Thank you! (makes payment)
+`
+
+// Write a welcome to my realm message
+const welcomeMessage = `
+👋 Welcome to pflow.xyz
+You're not just visiting a site — you're entering a living workspace.
+
+Here, models are the code.
+Petri nets guide logic.
+SVGs carry state.
+Markdown becomes interaction.
+
+Built on Gno.land, this is a place for thinkers, builders, and modelers.
+Whether you're crafting a contract or simulating a system —
+let’s build the future, one transition at a time.
 `
