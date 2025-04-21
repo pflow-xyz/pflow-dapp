@@ -6,7 +6,7 @@ import (
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb/components"
 	"github.com/gnolang/gno/tm2/pkg/bft/rpc/client"
-	handler "github.com/pflow-xyz/pflow-dapp/handler"
+	"github.com/pflow-xyz/pflow-dapp/handler"
 	"github.com/pflow-xyz/pflow-dapp/markdown"
 	"github.com/yuin/goldmark"
 	mdhtml "github.com/yuin/goldmark/renderer/html"

@@ -23,14 +23,17 @@ var modelJson = `{
 }
 `
 
-
 var newSource = "<gno-mark>\n\n" + modelJson + "\n" + "</gno-mark>\n\n"
 
 func Render(path string) string {
-    return "![profile](http://stackdump.com/profile.jpg)" + "\n\n"+
-    welcomeMessage //+ newSource
-}
+	return "![profile](http://stackdump.com/profile.jpg)" + "\n\n" +
+		welcomeMessage + "\n\n" +
+		"## Model\n\n" +
+		"```mermaid\n" +
+		diagram + "\n" +
+		"```\n\n"
 
+}
 
 // This is a simple sequence diagram for a coffee ordering process
 const diagram = `
