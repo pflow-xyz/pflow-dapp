@@ -2,7 +2,7 @@
 
 Interactive Extensions for gnodev Markdown Rendering
 
-Try it on [Fly.io https://pflow-dapp.fly.dev/r/pflow](https://pflow-dapp.fly.dev/r/pflow)
+Try it on Fly.io -> [https://pflow-dapp.fly.dev/r/pflow](https://pflow-dapp.fly.dev/r/pflow)
 
 ### Motivation
 
