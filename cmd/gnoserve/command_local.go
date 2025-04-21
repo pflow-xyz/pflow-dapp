@@ -30,7 +30,7 @@ var defaultLocalAppConfig = AppConfig{
 	logFormat:           "console",
 	chainDomain:         DefaultDomain,
 	maxGas:              10_000_000_000,
-	webListenerAddr:     "127.0.0.1:8888",
+	webListenerAddr:     "0.0.0.0:8888", // XXX public address
 	nodeRPCListenerAddr: "127.0.0.1:26657",
 	deployKey:           defaultDeployerAddress.String(),
 	home:                gnoenv.HomeDir(),
