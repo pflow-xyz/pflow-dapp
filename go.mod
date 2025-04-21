@@ -4,13 +4,15 @@ go 1.23.6
 
 require (
 	github.com/charmbracelet/lipgloss v1.1.1-0.20250404203927-76690c660834
-	github.com/gnolang/gno v0.0.0-20250416151333-b91d8587c390
-	github.com/gnolang/gno/contribs/gnodev v0.0.0-20250416151333-b91d8587c390
+	github.com/gnolang/gno v0.0.0-20250415071522-a6aa4a1013a7
+	github.com/gnolang/gno/contribs/gnodev v0.0.0-20250415071522-a6aa4a1013a7
 	github.com/litao91/goldmark-mathjax v0.0.0-20210217064022-a43cf739a50f
+	github.com/mangoumbrella/goldmark-figure v1.2.0
 	github.com/mattn/go-isatty v0.0.20
 	github.com/muesli/termenv v0.16.0
 	github.com/tenkoh/goldmark-img64 v0.1.2
 	github.com/yuin/goldmark v1.7.8
+	go.abhg.dev/goldmark/anchor v0.2.0
 	go.abhg.dev/goldmark/mermaid v0.5.0
 	go.uber.org/zap v1.27.0
 )
@@ -44,7 +46,6 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.25.1 // indirect
 	github.com/libp2p/go-buffer-pool v0.1.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
-	github.com/mangoumbrella/goldmark-figure v1.2.0 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/peterbourgon/ff/v3 v3.4.0 // indirect
@@ -62,7 +63,6 @@ require (
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc // indirect
 	github.com/zondax/hid v0.9.2 // indirect
 	github.com/zondax/ledger-go v0.14.3 // indirect
-	go.abhg.dev/goldmark/anchor v0.2.0 // indirect
 	go.etcd.io/bbolt v1.3.11 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/otel v1.34.0 // indirect

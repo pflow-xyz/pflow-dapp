@@ -151,8 +151,10 @@ func (ds *App) Setup(ctx context.Context, dirs ...string) (err error) {
 	loggerEvents := ds.logger.WithGroup(EventServerLogName)
 	ds.emitterServer = emitter.NewServer(loggerEvents)
 
-	// XXX: it would be nice to not have this hardcoded
-	examplesDir := filepath.Join("./examples/")
+	examplesDir := ""
+	if env := os.Getenv("GNO_SERVE"); env != "" {
+		examplesDir = env
+	}
 	fmt.Printf("examples dir: %s\n", examplesDir)
 
 	// Setup loader and resolver

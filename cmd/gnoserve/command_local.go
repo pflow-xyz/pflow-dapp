@@ -108,9 +108,12 @@ func execLocalApp(cfg *LocalAppConfig, args []string, cio commands.IO) error {
 			return err
 		}
 		_ = gnoroot
-		// FIXME
-		exampleRoot := filepath.Join("./examples")
-		baseResolvers = append(baseResolvers, packages.NewRootResolver(exampleRoot))
+		examplesDir := ""
+		if env := os.Getenv("GNO_SERVE"); env != "" {
+			examplesDir = env
+		}
+		fmt.Printf("examples dir: %s\n", examplesDir)
+		baseResolvers = append(baseResolvers, packages.NewRootResolver(examplesDir))
 	}
 
 	// Check if current directory is a valid gno package

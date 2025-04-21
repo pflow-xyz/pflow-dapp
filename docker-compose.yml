@@ -1,0 +1,12 @@
+services:
+  gnoserve:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: github.com/pflow-xyz/pflow-dapp
+    ports:
+      - "8888:8888"
+    environment:
+      - GNOROOT=/gnoroot
+    volumes: []
+    command: [ "/usr/bin/gnoserve" ]
