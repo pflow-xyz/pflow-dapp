@@ -5,17 +5,19 @@ WIP
 
 BACKLOG
 -------
-- [ ] add a  means to let users add gnoweb endpoints to an online registry
-- 
-- [ ] Build image index on chain & add widget to reference on-chain data 
-      - use this system to track, view, and deploy petri-net models
+
+- [ ] add GnoFrame tag support - roughly equivalent to farcaster frames
+- [ ] https://miniapps.farcaster.xyz/
+
+ICEBOX
+------
 
 - [ ] Consider Behavior / Thematic Tag designs
     - Behavioral Tags (what to do): <pflow-run>, <gno-exec>, <grid-editor>
     - Thematic/Domain Tags (how to render or interpret): <sprite>, <petri-net>, <pflow-dev>
 
-ICEBOX
-------
+- [ ] add a  means to let users add gnoweb endpoints to an online registry
+
 - [ ] for petrinet viewer: fix style issue for outer svgCanvas
 - 
 - [ ] deploy a compatible interface for gno-mark widget system to gno.and and add a registry
@@ -38,6 +40,8 @@ ICEBOX
 
 - [ ] refine dependencies on gnodev - eventually make a first-class api to host 3rd party plugins
 - [ ] obey TTL set in gno.land code - and/or just have a default for rendering new blocks that involve calls to gnoland
+- [ ] Build image index on chain & add widget to reference on-chain data 
+      - use this system to track, view, and deploy petri-net models
 
 DONE
 ----
