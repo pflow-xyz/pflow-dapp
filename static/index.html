@@ -46,8 +46,13 @@
 
         connectedCallback() {
             const gnoFrame = document.querySelector('gno-frame');
-            const data = JSON.parse(gnoFrame.innerHTML);
-            console.log({data})
+            var data = ""
+            try {
+                data = JSON.parse(gnoFrame.innerHTML);
+            } catch {
+                console.error('Error parsing JSON:', error);
+                return
+            }
             this.shadowRoot.querySelector('#container').innerHTML = `
               <div>
               <h1>${data.name}</h1>
@@ -61,7 +66,6 @@
               </div>
           `;
             this.shadowRoot.querySelector('button').addEventListener('click', () => {
-                const webhookUrl = data.webhookUrl;
                 const payload = {
                     name: data.name,
                     version: data.version,
@@ -70,9 +74,10 @@
                     imageUrl: data.imageUrl,
                     buttonTitle: data.buttonTitle,
                     splashImageUrl: data.splashImageUrl,
-                    splashBackgroundColor: data.splashBackgroundColor
+                    splashBackgroundColor: data.splashBackgroundColor,
+                    webhookUrl: data.webhookUrl,
                 };
-                // REVIEW: could add post callback - may require same origin?
+                // REVIEW: could add post callback
                 // fetch(webhookUrl, {
                 //     method: 'POST',
                 //     headers: {
@@ -90,8 +95,6 @@
     }
 
     customElements.define('gno-frame', GnoFrame);
-
-
 </script>
 </body>
 </html>
