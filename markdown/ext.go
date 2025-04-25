@@ -11,7 +11,6 @@ import (
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer"
 	"github.com/yuin/goldmark/util"
-	"go.abhg.dev/goldmark/anchor"
 	"go.abhg.dev/goldmark/mermaid"
 )
 
@@ -48,6 +47,5 @@ func (e *GnoMarkExtension) Extend(m goldmark.Markdown) {
 	// Awesome! caches the image data in the HTML
 	m.Renderer().AddOptions(img64.WithFileReader(img64.AllowRemoteFileReader(http.DefaultClient)))
 	figure.Figure.Extend(m)
-	extender := anchor.Extender{}
-	extender.Extend(m)
+
 }

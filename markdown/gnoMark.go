@@ -13,11 +13,14 @@ import (
 	"github.com/yuin/goldmark/util"
 )
 
-var KindGnoMark = ast.NewNodeKind("GnoMarkBlock")
+var (
+	KindGnoMark = ast.NewNodeKind("GnoMarkBlock")
 
-var templateRegistry = map[string]func(string) string{
-	"petrinet": petriNetRender,
-}
+	templateRegistry = map[string]func(string) string{
+		"petrinet": petriNetRender,
+		"frame":    gnoFrameRender,
+	}
+)
 
 // REVIEW: consider moving this to a config
 type WebHost struct {
