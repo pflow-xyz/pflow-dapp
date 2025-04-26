@@ -22,6 +22,17 @@
   <meta property="og:image" content="{{ .Image }}" />
   <meta property="og:url" content="{{ .URL }}" />
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="gno.land" />
+  <!-- TODO consider "profile" props https://ogp.me/#no_vertical -->
+ <!-- TODO: consider using og:image:alt and og:image:width/height
+ likely this would be a way to link to an image without linking to a file directly...
+ -->
+
+
+  <!-- GnoFrame metadata hardcoded for now
+  https://miniapps.farcaster.xyz/docs/specification
+  -->
+  <meta name="gno:frame" content="{ \"msg\": \"consider supporting exact fc spec for mini-app \" }" />
 
   <!-- Twitter Card metadata -->
   <meta name="twitter:card" content="summary_large_image" />
@@ -44,5 +55,56 @@
   <!-- wallet integrations -->
   <meta name="gnoconnect:rpc" content="{{ .Remote }}" />
   <meta name="gnoconnect:chainid" content="{{ .ChainId }}" />
+
+  <!-- consider how to add structured data
+  https://developers.google.com/search/docs/appearance/structured-data/event?sjid=8613522981257554012-NC
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Event",
+      "name": "The Adventures of Kira and Morrison",
+      "startDate": "2025-07-21T19:00-05:00",
+      "endDate": "2025-07-21T23:00-05:00",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "location": {
+        "@type": "Place",
+        "name": "Snickerpark Stadium",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "100 West Snickerpark Dr",
+          "addressLocality": "Snickertown",
+          "postalCode": "19019",
+          "addressRegion": "PA",
+          "addressCountry": "US"
+        }
+      },
+      "image": [
+        "https://example.com/photos/1x1/photo.jpg",
+        "https://example.com/photos/4x3/photo.jpg",
+        "https://example.com/photos/16x9/photo.jpg"
+      ],
+      "description": "The Adventures of Kira and Morrison is coming to Snickertown in a can't miss performance.",
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.example.com/event_offer/12345_202403180430",
+        "price": 30,
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "validFrom": "2024-05-21T12:00"
+      },
+      "performer": {
+        "@type": "PerformingGroup",
+        "name": "Kira and Morrison"
+      },
+      "organizer": {
+        "@type": "Organization",
+        "name": "Kira and Morrison Music",
+        "url": "https://kiraandmorrisonmusic.com"
+      }
+    }
+  </script>
+  -->
+
 </head>
 {{ end }}
