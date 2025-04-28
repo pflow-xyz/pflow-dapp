@@ -1,10 +1,15 @@
 package main
 
 import (
+	"context"
+	"fmt"
+	"github.com/gnolang/gno/tm2/pkg/bft/rpc/client"
 	. "github.com/pflow-xyz/pflow-app/metamodel"
 	"github.com/pflow-xyz/pflow-app/metamodel/cid"
 	. "github.com/pflow-xyz/pflow-app/metamodel/token"
+	"log/slog"
 	"strings"
+	"time"
 )
 
 // TODO: support multiple tokens - should it be here? or should users provide
@@ -41,18 +46,58 @@ func toJson() string {
 	return w.String()
 }
 
-func main() {
+func tick(cli *client.RPCClient, logger *slog.Logger) {
+	qpath := "vm/qrender"
+	data := []byte("gno.land/r/gnoframe:frame")
 
-	if len(importedModel.Places) != 2 {
-		panic("Expected 2 places, got " + string(len(importedModel.Places)))
-	}
-	if len(importedModel.Transitions) != 4 {
-		panic("Expected 4 transitions, got " + string(len(importedModel.Transitions)))
-	}
-	if len(importedModel.Arrows) != 5 {
-		panic("Expected 5 arrows, got " + string(len(importedModel.Arrows)))
-	}
+	// add a defer to recover from any panics during the tick
+	defer func() {
+		if r := recover(); r != nil {
+			logger.Error("panic during tick", "error", r)
+		}
+	}()
 
+	logger.Info("Ticking...")
+
+	// read the '/r/gnoframe realm display func
+	logger.Info("Polling for events...")
+
+	res, err := cli.ABCIQuery(qpath, data)
+	if err != nil {
+		logger.Error("error querying events", "error", err)
+		return
+	}
+	if len(res.Response.Data) == 0 {
+		logger.Info("No events found in response")
+		return
+	}
+	logger.Info(fmt.Sprintf("Events found: %s", res.Response.Data))
+}
+
+func setupPolling(ctx context.Context, logger *slog.Logger, remoteAddr string) {
+	httpClient, err := client.NewHTTPClient(remoteAddr)
+	_ = httpClient // TODO: use this client to poll events
+	if err != nil {
+		logger.Error("unable to create HTTP client", "error", err)
+		return
+	}
+	ticker := time.NewTicker(5 * time.Second) // match block time of gno chain
+
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				tick(httpClient, logger)
+			case <-ctx.Done():
+				ticker.Stop()
+				return
+			}
+		}
+	}()
+}
+
+// TODO: actually remove
+func exampleTest() {
 	importedCid := cid.NewCid(importedModel).String()
 	modelCid := cid.NewCid(exampleModel).String()
 	if importedCid != modelCid {
