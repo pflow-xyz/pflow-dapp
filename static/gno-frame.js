@@ -11,7 +11,7 @@ class GnoFrame extends HTMLElement {
                 height: 100%;
             }
             </style>
-            <div id="container">
+            <div id="gno-frame-container">
             <slot></slot>
             </div>
         `;
@@ -25,7 +25,10 @@ class GnoFrame extends HTMLElement {
             console.error('Error parsing JSON:', error);
             return;
         }
-        this.shadowRoot.querySelector('#container').innerHTML = `
+        const gnoFrameId = '#'+data.gnoFrame+"-container"
+        console.log(gnoFrameId);
+        /* Add your html here */
+        this.shadowRoot.querySelector(gnoFrameId).innerHTML = `
             <div>
             <h1>${data.name}</h1>
             <img src="${data.iconUrl}" alt="${data.name}">
