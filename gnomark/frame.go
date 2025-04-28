@@ -1,4 +1,4 @@
-package markdown
+package gnomark
 
 import (
 	"encoding/json"

@@ -1,7 +1,7 @@
 package gnoframe
 
 import (
-    "net/url"
+	"net/url"
 )
 
 var welcome = `

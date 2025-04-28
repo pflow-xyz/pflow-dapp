@@ -25,8 +25,7 @@ class GnoFrame extends HTMLElement {
             console.error('Error parsing JSON:', error);
             return;
         }
-        const gnoFrameId = '#'+data.gnoFrame+"-container"
-        console.log(gnoFrameId);
+        const gnoFrameId = '#'+data.frame+"-container"
         /* Add your html here */
         this.shadowRoot.querySelector(gnoFrameId).innerHTML = `
             <div>

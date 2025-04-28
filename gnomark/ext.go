@@ -1,4 +1,4 @@
-package markdown
+package gnomark
 
 import (
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb"

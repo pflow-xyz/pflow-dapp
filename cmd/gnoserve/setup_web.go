@@ -6,8 +6,8 @@ import (
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb"
 	"github.com/gnolang/gno/gno.land/pkg/gnoweb/components"
 	"github.com/gnolang/gno/tm2/pkg/bft/rpc/client"
+	"github.com/pflow-xyz/pflow-dapp/gnomark"
 	"github.com/pflow-xyz/pflow-dapp/handler"
-	"github.com/pflow-xyz/pflow-dapp/markdown"
 	"github.com/yuin/goldmark"
 	mdhtml "github.com/yuin/goldmark/renderer/html"
 	"log/slog"
@@ -47,7 +47,7 @@ func NewHTMLClient(log *slog.Logger, cfg *gnoweb.HTMLWebClientConfig) (client *g
 }
 
 func NewGnomarkExt(client *gnoweb.HTMLWebClient) GnomarkExt {
-	return &markdown.GnoMarkExtension{
+	return &gnomark.GnoMarkExtension{
 		Client: client,
 	}
 }
