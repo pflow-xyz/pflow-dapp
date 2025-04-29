@@ -14,13 +14,6 @@ func init() {
 	}
 }
 
-type GnoObj struct {
-	obj map[string]interface{}
-}
-
-type Component interface {
-	Render(opts map[string]interface{}) string
-}
 
 // Identity declaration for GnoFrame
 // Users extending GnoFrame can implement the Component interface
