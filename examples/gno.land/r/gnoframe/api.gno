@@ -14,7 +14,6 @@ func init() {
 	}
 }
 
-
 // Identity declaration for GnoFrame
 // Users extending GnoFrame can implement the Component interface
 // and adopt a new "gnoFrame": "gno-frame" key in their JSON metadata.

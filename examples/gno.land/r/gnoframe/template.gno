@@ -1,6 +1,12 @@
 package gnoframe
 
+import (
+	"net/url"
+	"strings"
+)
+
 func init() {
+	_ = strings.TrimSpace
 }
 
 type GnoObj struct {
@@ -12,23 +18,23 @@ type Component interface {
 }
 
 func isValidHelper(fn interface{}) bool {
-    switch fn.(type) {
-    case func(opts map[string]interface{}) string,
-        func(string) string,
-        func() string,
-        string:
-        return true
-    default:
-        return false
-    }
+	switch fn.(type) {
+	case func(opts map[string]interface{}) string,
+		func(string) string,
+		func() string,
+		string:
+		return true
+	default:
+		return false
+	}
 }
 
 // use registry to populate available helpers
 func (nob *GnoObj) renderHelper(path string) string {
 	if f, ok := nob.obj[path]; ok {
 		switch f := f.(type) {
-		case func(opts map[string]interface{}) string:
-			return f(Context(path))
+		// case func(opts map[string]interface{}) string:
+		// return f(nob.Context(path).(map[string]interface{}))
 		case func(string) string:
 			return f(path)
 		case func() string:
@@ -43,35 +49,39 @@ func (nob *GnoObj) renderHelper(path string) string {
 }
 
 func (nob *GnoObj) Context(path string) map[string]string {
-    opts := make(map[string]interface{})
-    for k, v := range nob.obj {
-        opts[k] = nob.renderHelper(k)
-    }
-    opts["path"] = path
-    return opts
+	opts := make(map[string]interface{})
+	for k, v := range nob.obj {
+		_ = v
+		opts[k] = nob.renderHelper(k)
+	}
+	opts["path"] = path
+	// FIXME
+	_ = opts
+	return map[string]string{}
 }
 
 func IsValidHelper(fn interface{}) bool {
-    switch fn.(type) {
-    case func(string) string,
-        return true
-    default:
-        return false
-    }
+	switch fn.(type) {
+	case func(string) string:
+		return true
+	default:
+		return false
+	}
 }
 
 func RegisterHelper(name string, fn interface{}) {
-    if !isValidHelper(fn) {
-        panic("Invalid helper function type")
-    }
-    registry["helper::"+name] = fn
+	if !isValidHelper(fn) {
+		panic("Invalid helper function type")
+	}
+	registry.obj["helper::"+name] = fn
 }
 
 func GetHelper(name string) func(string) string {
-    return registry["helper::"+name].(func(string) string)
+	return registry.obj["helper::"+name].(func(string) string)
 }
 
-func Render(template string, ctx map[string]string) string {
+/*
+func renderTemplate(template string, ctx map[string]string) string {
     var output string
     var i, n int
     n = len(template)
@@ -98,15 +108,17 @@ func Render(template string, ctx map[string]string) string {
     }
     return output
 }
+*/
 
 // formatter to escape path variables
 func pathEsc(v string) string {
-    return url.EscapePath(v)
+	return url.PathEscape(v)
 }
 
 // REVIEW: does this support { varname|pathEsc } syntax?
+/*
 func resolveTag(tag string, ctx map[string]string) string {
-    var parts = std.Split(tag, " ")
+    var parts = strings.Split(tag, " ")
     if len(parts) == 1 {
         // Simple variable replacement
         if val, ok := ctx[parts[0]]; ok {
@@ -124,3 +136,4 @@ func resolveTag(tag string, ctx map[string]string) string {
     }
     return "" // malformed
 }
+*/
