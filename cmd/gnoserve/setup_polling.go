@@ -46,9 +46,11 @@ func toJson() string {
 	return w.String()
 }
 
+const renderPath = "vm/qrender"
+const gnoFrameRealm = "gno.land/r/gnoframe"
+
 func tick(cli *client.RPCClient, logger *slog.Logger) {
-	qpath := "vm/qrender"
-	data := []byte("gno.land/r/gnoframe:frame")
+	data := []byte(gnoFrameRealm + ":frame") // FIXME: this should correspond to schema declarations
 
 	// add a defer to recover from any panics during the tick
 	defer func() {
@@ -62,7 +64,7 @@ func tick(cli *client.RPCClient, logger *slog.Logger) {
 	// read the '/r/gnoframe realm display func
 	logger.Info("Polling for events...")
 
-	res, err := cli.ABCIQuery(qpath, data)
+	res, err := cli.ABCIQuery(renderPath, data)
 	if err != nil {
 		logger.Error("error querying events", "error", err)
 		return
