@@ -13,13 +13,20 @@ but are not yet fully implemented or stable.
 
 - GnoFrame: a framework for building Gno applications that can be embedded in other applications
   - provides a specification for building Gno applications
-- GnoMark: a markdown parser and renderer for Gno applications
-  - supports custom js/HTMLElements or Gno-backed templates
-  - FUTURE: integrate w/ forms when available on gno.land
-- Template: a {{tag | helper}} style template engine for working with strings
-    - supports custom functions and helpers
-    - stores templates in on-chain registry
+  - StructuredData tag for defining structured data in Gno applications
+  - Share frames by exposing the proper metadata in the resultant HTML
+    - GnoMark: a markdown parser and renderer for Gno applications
+      - supports custom js/HTMLElements or Gno-backed templates
+      - FUTURE: integrate w/ forms when available on gno.land
+    - Template: a {{tag | helper}} style template engine for working with strings
+      - supports custom functions and helpers
+      - stores templates in on-chain registry
+
 - Oracle: a toolkit for CQRs (Commands, Queries, and Responses) in Gno applications
-- Pflow: a custom frame implementation for GnoFrame applications
+  - a polling based approach to handling asynchronous data updates
+  - supports custom data sources and sinks
+  - FUTURE: integrate with GnoFrame for modularity and reusability
+
+- Pflow: a gnoFrame implementation of a process flow engine
     - wf-nets used for multi-step processes
     - state-machines / Petri-Nets - used to construct DSL grammars for formal specification
