@@ -8,7 +8,7 @@ import (
 var (
 	gnoFrameWebHost = &WebHost{
 		Base: "https://cdn.jsdelivr.net/gh/pflow-xyz/pflow-dapp@",
-		Tag:  "0.1.0",
+		Tag:  "0.2.0",
 		Path: "/static/",
 	}
 
@@ -61,9 +61,7 @@ func gnoFrameHtml(key, value string, content string) (out string) {
 	return strings.ReplaceAll(out, "{CONTENT}", content)
 }
 
-func gnoFrameRender(_ string) string {
-	// FIXME: parse content instead of using defaultFrame
-	content := string(defaultFrame.ToJson())
+func gnoFrameRender(content string) string {
 	return gnoFrameHtml("{CDN}", gnoFrameWebHost.Cdn(), content)
 }
 
