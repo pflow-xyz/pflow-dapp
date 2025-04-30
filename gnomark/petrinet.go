@@ -1,4 +1,4 @@
-package markdown
+package gnomark
 
 import (
 	"strings"
@@ -16,6 +16,9 @@ func petriNetHtml(key, value string, s string) (out string) {
 	out = strings.ReplaceAll(petriNetTemplate, key, value)
 	return strings.ReplaceAll(out, "{SOURCE}", s)
 }
+
+// TODO: convert this to work as 'petri-net' custom frame implementation
+// likely this will require a way to register callbacks view 'top level' gnomark package
 
 func petriNetRender(source string) string {
 	return petriNetHtml("{CDN}", petriNetWebHost.Cdn(), source)

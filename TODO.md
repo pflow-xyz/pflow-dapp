@@ -9,14 +9,16 @@ BACKLOG
 - [ ] add GnoFrame tag support - roughly equivalent to farcaster frames
 - [ ] https://miniapps.farcaster.xyz/
 
-ICEBOX
-------
-
 - [ ] Consider Behavior / Thematic Tag designs
     - Behavioral Tags (what to do): <pflow-run>, <gno-exec>, <grid-editor>
     - Thematic/Domain Tags (how to render or interpret): <sprite>, <petri-net>, <pflow-dev>
 
+- [ ] add wf-net runner - use petri-nets to design processes with preconditions
+
+ICEBOX
+------
 - [ ] add a  means to let users add gnoweb endpoints to an online registry
+      - TODO: consider making 'frame' the basic UI for registration ... 
 
 - [ ] for petrinet viewer: fix style issue for outer svgCanvas
 - 

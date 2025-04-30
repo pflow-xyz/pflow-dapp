@@ -1,4 +1,4 @@
-package markdown
+package gnomark
 
 import (
 	"bytes"
@@ -21,17 +21,6 @@ var (
 		"frame":    gnoFrameRender,
 	}
 )
-
-// REVIEW: consider moving this to a config
-type WebHost struct {
-	Base string
-	Tag  string
-	Path string
-}
-
-func (h *WebHost) Cdn() string {
-	return h.Base + h.Tag + h.Path
-}
 
 type gnoMarkBlock struct {
 	ast.BaseBlock

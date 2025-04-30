@@ -397,6 +397,15 @@ func (ds *App) RunServer(ctx context.Context, term *rawterm.RawTerm) error {
 			"lisn", fmt.Sprintf("http://%s", addr))
 	}
 
+	{ // Setup polling to trigger events on/off chain
+		pollRpc := ds.devNode.GetRemoteAddress()
+		if ds.proxy != nil {
+			// REVIEW: does this make sense to be here?
+			pollRpc = ds.proxy.TargetAddress() // update remote address with proxy target address
+		}
+		setupPolling(ctx, ds.logger.WithGroup("GnoPoll"), pollRpc)
+	}
+
 	if ds.cfg.interactive {
 		ds.logger.WithGroup("--- READY").Info("for commands and help, press `h`", "took", time.Since(ds.start))
 	} else {
