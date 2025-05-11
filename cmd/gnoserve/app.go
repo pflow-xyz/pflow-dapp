@@ -403,7 +403,7 @@ func (ds *App) RunServer(ctx context.Context, term *rawterm.RawTerm) error {
 			// REVIEW: does this make sense to be here?
 			pollRpc = ds.proxy.TargetAddress() // update remote address with proxy target address
 		}
-		setupPolling(ctx, ds.logger.WithGroup("GnoPoll"), pollRpc)
+		setupReactor(ctx, ds.logger.WithGroup("GnoPoll"), pollRpc)
 	}
 
 	if ds.cfg.interactive {

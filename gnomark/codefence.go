@@ -10,8 +10,9 @@ import (
 )
 
 var templateRegistry = map[string]func(string) string{
-	"frame": gnoFrameRender,
-	"html":  noHtmlMsg,
+	"frame":    gnoFrameRender,
+	"petrinet": petriNetRender,
+	"html":     noHtmlMsg,
 }
 
 // gnoMarkRenderer renders the gomark fenced code block as HTML.

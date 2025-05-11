@@ -1,7 +1,6 @@
-package main
+package reactor
 
 import (
-	"context"
 	"fmt"
 	"github.com/gnolang/gno/tm2/pkg/bft/rpc/client"
 	. "github.com/pflow-xyz/pflow-app/metamodel"
@@ -9,10 +8,10 @@ import (
 	. "github.com/pflow-xyz/pflow-app/metamodel/token"
 	"log/slog"
 	"strings"
-	"time"
 )
 
-// TODO: support multiple tokens - should it be here? or should users provide
+// TODO: support multiple tokens - relocate main wf-nets and models to their own
+// package
 
 var (
 	exampleModel = Model{
@@ -49,7 +48,7 @@ func toJson() string {
 const renderPath = "vm/qrender"
 const gnoFrameRealm = "gno.land/r/gnoframe"
 
-func tick(cli *client.RPCClient, logger *slog.Logger) {
+func Tick(cli *client.RPCClient, logger *slog.Logger) {
 	data := []byte(gnoFrameRealm + ":frame") // FIXME: this should correspond to schema declarations
 
 	// add a defer to recover from any panics during the tick
@@ -74,28 +73,6 @@ func tick(cli *client.RPCClient, logger *slog.Logger) {
 		return
 	}
 	logger.Info(fmt.Sprintf("Events found: %s", res.Response.Data))
-}
-
-func setupPolling(ctx context.Context, logger *slog.Logger, remoteAddr string) {
-	httpClient, err := client.NewHTTPClient(remoteAddr)
-	_ = httpClient // TODO: use this client to poll events
-	if err != nil {
-		logger.Error("unable to create HTTP client", "error", err)
-		return
-	}
-	ticker := time.NewTicker(5 * time.Second) // match block time of gno chain
-
-	go func() {
-		for {
-			select {
-			case <-ticker.C:
-				tick(httpClient, logger)
-			case <-ctx.Done():
-				ticker.Stop()
-				return
-			}
-		}
-	}()
 }
 
 // TODO: actually remove
