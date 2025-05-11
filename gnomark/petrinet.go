@@ -1,6 +1,7 @@
 package gnomark
 
 import (
+	"encoding/json"
 	"strings"
 )
 
@@ -14,11 +15,37 @@ var (
 
 func petriNetHtml(key, value string, s string) (out string) {
 	out = strings.ReplaceAll(petriNetTemplate, key, value)
-	return strings.ReplaceAll(out, "{SOURCE}", s)
+	return strings.ReplaceAll(out, "{SOURCE}", getPetriNetJson(s))
 }
 
 // TODO: convert this to work as 'petri-net' custom frame implementation
 // likely this will require a way to register callbacks view 'top level' gnomark package
+
+func getPetriNetJson(source string) string {
+	// read { "petrinet": {},  }
+
+	// unpack the json into a map[string]interface{}
+	var data map[string]interface{}
+
+	// unmashal
+	err := json.Unmarshal([]byte(source), &data)
+	if err != nil {
+		return `{ "error": "invalid json" }`
+	}
+
+	// get the "petrinet" key
+	petriNetData, ok := data["petrinet"].(map[string]interface{})
+	if !ok {
+		return `{ "error": "invalid json: missing key: 'petrinet'" }`
+	}
+	// convert the map to a json string
+	petriNetJson, err := json.Marshal(petriNetData)
+	if err != nil {
+		return `{ "error": "invalid json: unable to marshal 'petrinet' key" }`
+	}
+	// return the json string
+	return string(petriNetJson)
+}
 
 func petriNetRender(source string) string {
 	return petriNetHtml("{CDN}", petriNetWebHost.Cdn(), source)
