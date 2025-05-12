@@ -18,16 +18,9 @@ func petriNetHtml(key, value string, s string) (out string) {
 	return strings.ReplaceAll(out, "{SOURCE}", getPetriNetJson(s))
 }
 
-// TODO: convert this to work as 'petri-net' custom frame implementation
-// likely this will require a way to register callbacks view 'top level' gnomark package
-
 func getPetriNetJson(source string) string {
-	// read { "petrinet": {},  }
-
-	// unpack the json into a map[string]interface{}
 	var data map[string]interface{}
 
-	// unmashal
 	err := json.Unmarshal([]byte(source), &data)
 	if err != nil {
 		return `{ "error": "invalid json" }`
@@ -45,6 +38,9 @@ func getPetriNetJson(source string) string {
 	}
 	// return the json string
 	return string(petriNetJson)
+}
+
+func printSource(s map[string]interface{}) string {
 }
 
 func petriNetRender(source string) string {
