@@ -48,7 +48,7 @@ func getPetriNetJson(source string) string {
 }
 
 func printSource(s map[string]interface{}) string {
-	// REVIEW is this needed?
+	// FIXME: print nicely formatted json
 	return ""
 }
 
