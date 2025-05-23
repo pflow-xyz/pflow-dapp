@@ -2,7 +2,7 @@
 
 This is a fork gno.land that adds custom markdown extentions to gno.land
 
-Try it on Fly.io -> [https://pflow-dapp.fly.dev/r/pflow](https://pflow-dapp.fly.dev/r/pflow)
+Try it on Fly.io -> [https://pflow-dapp.fly.dev](https://pflow-dapp.fly.dev)
 
 status: Pre-Alpha
 
