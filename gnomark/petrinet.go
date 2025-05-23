@@ -6,9 +6,16 @@ import (
 )
 
 var (
+	// petriNetWebHost = &WebHost{
+	// 	Base: "https://cdn.jsdelivr.net/gh/pflow-xyz/pflow-app@",
+	// 	Tag:  "0.2.1",
+	// 	Path: "/static/",
+	// }
+
+	// serve files from the same webserver
 	petriNetWebHost = &WebHost{
-		Base: "https://cdn.jsdelivr.net/gh/pflow-xyz/pflow-app@",
-		Tag:  "0.2.1",
+		Base: "",
+		Tag:  "",
 		Path: "/static/",
 	}
 )
