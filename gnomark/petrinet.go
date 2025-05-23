@@ -41,6 +41,8 @@ func getPetriNetJson(source string) string {
 }
 
 func printSource(s map[string]interface{}) string {
+	// REVIEW is this needed?
+	return ""
 }
 
 func petriNetRender(source string) string {

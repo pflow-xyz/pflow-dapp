@@ -28,5 +28,5 @@ let’s build the future, one transition at a time.
 
 
 ### Explore the Petri-net model
-[Explore the test Petri-net model](./pflow:model) <- See our implementation of the Petri-net model in Gno.land
+[Explore the test Petri-net model](./pflow000:model) <- See our implementation of the Petri-net model in Gno.land
 `

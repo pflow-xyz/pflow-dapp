@@ -183,7 +183,7 @@ func (ds *App) Setup(ctx context.Context, dirs ...string) (err error) {
 	// Modifiers will be added later to the node config bellow
 	ds.paths = append(paths, localPaths...)
 	// FIXME move to config again
-	ds.cfg.webHome = "r/pflow"
+	ds.cfg.webHome = "r/pflow000"
 
 	// Setup default web home realm, fallback on first local path
 	switch webHome := ds.cfg.webHome; webHome {
