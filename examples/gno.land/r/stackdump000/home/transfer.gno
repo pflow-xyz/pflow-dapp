@@ -6,33 +6,22 @@ import (
 
 func init() {
 	register("transfer", func(_ string) string {
-		return "```gnomark\n" + transfer().ToGnoMark() + "\n```"
+		return "```gnomark\n" + transfer("g1e8vw6gh284q7ggzqs8ne6r8j9aqhnmvl6rzzmz", "PAY2ADDR", 3).ToGnoMark() + "\n```"
 	})
 }
 
-// TODO: upgrade to support multiple token colors
-func transfer(toAddress string, action, multiple int64) *mm.Pflow {
-    _ = toAddress // unused in this example
-    _ = action // unused in this example
-    _ = multiple // unused in this example
-
-    // TODO: template petri-net from input parameters
-
+func transfer(toAddress string, action string, multiple int64) *mm.Pflow {
 	return &mm.Pflow{
 		Places: map[string]mm.Place{
-			"place0": {Offset: 0, Initial: mm.T(1), Capacity: mm.T(3), X: 130, Y: 207},
+			"$wallet": {Offset: 0, Initial: mm.T(9), Capacity: mm.T(0), X: 20, Y: 100},
+			toAddress: {Offset: 0, Initial: mm.T(0), Capacity: mm.T(0), X: 270, Y: 100},
 		},
 		Transitions: map[string]mm.Transition{
-			"txn0": {X: 46, Y: 116},
-			"txn1": {X: 227, Y: 112},
-			"txn2": {X: 43, Y: 307},
-			"txn3": {X: 235, Y: 306},
+			action: {X: 150, Y: 100},
 		},
 		Arrows: []mm.Arrow{
-			{Source: "txn0", Target: "place0", Weight: mm.T(4)},
-			{Source: "place0", Target: "txn1", Weight: mm.T(3)},
-			{Source: "txn2", Target: "place0", Weight: mm.T(3), Inhibit: true},
-			{Source: "place0", Target: "txn3", Weight: mm.T(1), Inhibit: true},
+			{Source: "$wallet", Target: action, Weight: mm.T(multiple)},
+			{Source: action, Target: toAddress, Weight: mm.T(multiple)},
 		},
 	}
 }

@@ -175,4 +175,6 @@ class PetriNet extends HTMLElement {
     }
 }
 
-customElements.define('petri-net', PetriNet);
+if (!customElements.get('petri-net')) {
+    customElements.define('petri-net', PetriNet);
+}
