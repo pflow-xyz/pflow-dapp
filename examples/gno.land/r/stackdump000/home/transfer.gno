@@ -10,6 +10,7 @@ func init() {
 	})
 }
 
+// The first Logo-glyph!! - could/should it be added to a registry?
 func transfer(toAddress string, action string, multiple int64) *mm.Pflow {
 	return &mm.Pflow{
 		Places: map[string]mm.Place{
@@ -24,4 +25,12 @@ func transfer(toAddress string, action string, multiple int64) *mm.Pflow {
 			{Source: action, Target: toAddress, Weight: mm.T(multiple)},
 		},
 	}
+}
+
+func Transfer(toAddress string, amount int64) {
+    m := transfer(toAddress, "PAY2ADDR", amount)
+    // TODO: actually keep state for addresses
+    // it should load state and try to fire the transition
+    // panic on failure
+    _ = m
 }
