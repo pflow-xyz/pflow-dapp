@@ -1,7 +1,8 @@
 class PetriNet extends HTMLElement {
-    constructor() {
+constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
+        this.svgId = 'petrinetFrame_' + Math.random().toString(36).substring(2, 15);
+        this.attachShadow({mode: 'open'});
         this.shadowRoot.innerHTML = `
             <style>
                 :host {
@@ -22,7 +23,7 @@ class PetriNet extends HTMLElement {
                 .token { fill: #000000; stroke: gray; stroke-width: 0.5; }
                 .tokenSmall { font-size: small; user-select: none; font-weight: bold; }
             </style>
-            <svg id="petrinetFrame" xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" >
+            <svg id="${this.svgId}" xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" >
                 <defs>
                     <marker id="markerArrow1" markerWidth="22.5" markerHeight="12" refX="9" refY="6" orient="auto">
                         <path d="M3,1.5 L3,12 L10.5,6 L3,1.5"/>
@@ -34,11 +35,10 @@ class PetriNet extends HTMLElement {
             </svg>
         `;
     }
-
     connectedCallback() {
-        const source = this.getAttribute('source');
+        const source = this.innerHTML.trim();
         if (!source) {
-            console.error('No source attribute provided for <petri-net>');
+            console.error('No source provided in the innerHTML of <petri-net>');
             return;
         }
 
@@ -54,9 +54,9 @@ class PetriNet extends HTMLElement {
     }
 
     renderPetriNet(petriNet) {
-        const svg = this.shadowRoot.querySelector('#petrinetFrame');
+        const svg = this.shadowRoot.querySelector(`#${this.svgId}`);
         if (!svg) {
-            console.error('SVG element not found');
+            console.error('SVG element not found', this.svgId);
             return;
         }
 
@@ -82,7 +82,25 @@ class PetriNet extends HTMLElement {
             line.setAttribute('x2', target.x);
             line.setAttribute('y2', target.y);
             line.setAttribute('class', 'arc');
+
+            // Add arrowhead or inhibitor marker
+            if (arc.inhibit) {
+                line.setAttribute('marker-end', 'url(#markerInhibit1)');
+            } else {
+                line.setAttribute('marker-end', 'url(#markerArrow1)');
+            }
+
             fragment.appendChild(line);
+
+            // Add weight label
+            const midX = (source.x + target.x) / 2;
+            const midY = (source.y + target.y) / 2;
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', midX);
+            text.setAttribute('y', midY - 5);
+            text.setAttribute('class', 'label');
+            text.textContent = arc.weight[0];
+            fragment.appendChild(text);
         });
 
         // Render places

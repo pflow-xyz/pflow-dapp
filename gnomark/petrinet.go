@@ -6,13 +6,14 @@ import (
 )
 
 var (
+	// serve files from the CDN
 	// petriNetWebHost = &WebHost{
-	// 	Base: "https://cdn.jsdelivr.net/gh/pflow-xyz/pflow-app@",
-	// 	Tag:  "0.2.1",
+	// 	Base: "https://cdn.jsdelivr.net/gh/pflow-xyz/pflow-dapp@",
+	// 	Tag:  "main",
 	// 	Path: "/static/",
 	// }
 
-	// serve files from the same webserver
+	// serve files from the local filesystem
 	petriNetWebHost = &WebHost{
 		Base: "",
 		Tag:  "",
@@ -56,27 +57,9 @@ func petriNetRender(source string) string {
 	return petriNetHtml("{CDN}", petriNetWebHost.Cdn(), source)
 }
 
-// FIXME replace hardcoded values with values from the json
 var petriNetTemplate = `
-    <petri-net source='{
-        "modelType": "PetriNet",
-        "version": "v1",
-        "tokens": ["black"],
-        "places": {
-            "place0": { "offset": 0, "initial": [3], "capacity": [3], "x": 130, "y": 207 }
-        },
-        "transitions": {
-            "txn0": { "x": 46, "y": 116 },
-            "txn1": { "x": 227, "y": 112 },
-            "txn2": { "x": 43, "y": 307 },
-            "txn3": { "x": 235, "y": 306 }
-        },
-        "arcs": [
-            { "source": "txn0", "target": "place0", "weight": [1] },
-            { "source": "place0", "target": "txn1", "weight": [3] },
-            { "source": "txn2", "target": "place0", "weight": [3], "inhibit": true },
-            { "source": "place0", "target": "txn3", "weight": [1], "inhibit": true }
-        ]
-    }'></petri-net>
+    <petri-net>
+		{SOURCE}
+    </petri-net>
     <script src="{CDN}petri-net.js"></script>
 `
