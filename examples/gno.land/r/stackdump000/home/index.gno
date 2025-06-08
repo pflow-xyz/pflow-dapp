@@ -9,7 +9,10 @@ var (
 	realmAllowPrefix = []string{}
 	displayPaths     = []string{
 		//"exampleModelV1",
-		"transfer",
+		// "transfer",
+		//"ask",
+		//"bid",
+	    "poll",
 	}
 )
 
