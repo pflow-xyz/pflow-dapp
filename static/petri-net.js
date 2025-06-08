@@ -80,6 +80,34 @@ class PetriNet extends HTMLElement {
         svg.appendChild(fragment);
     }
 
+    midMarker(source, target, arc) {
+        const midX = (source.x + target.x) / 2;
+        const midY = (source.y + target.y) / 2;
+
+        // TODO: circle should be the color of the token being transferred
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', midX);
+        circle.setAttribute('cy', midY);
+        circle.setAttribute('r', '12'); // Adjust radius as needed
+        circle.setAttribute('class', 'label-background'); // Add a class for styling
+        circle.setAttribute('fill', '#f0f0f0'); // Shaded color
+        circle.setAttribute('stroke', '#000000'); // Optional border
+        circle.setAttribute('stroke-width', '1');
+
+        const midMarker = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        midMarker.setAttribute('x', midX);
+        midMarker.setAttribute('y', midY + 4); // Adjust vertical alignment
+        midMarker.setAttribute('class', 'label');
+        midMarker.setAttribute('text-anchor', 'middle'); // Center text horizontally
+        midMarker.textContent = arc.weight[0];
+
+        const fragment = document.createDocumentFragment();
+        fragment.appendChild(circle);
+        fragment.appendChild(midMarker);
+
+        return fragment;
+    }
+
     renderArc(fragment, arc, petriNet) {
         const source = petriNet.places[arc.source] || petriNet.transitions[arc.source];
         const target = petriNet.places[arc.target] || petriNet.transitions[arc.target];
@@ -88,13 +116,11 @@ class PetriNet extends HTMLElement {
             return;
         }
 
-        // Calculate direction vector
         const dx = target.x - source.x;
         const dy = target.y - source.y;
         const length = Math.sqrt(dx * dx + dy * dy);
 
-        // Shorten the arrow by reducing the endpoint
-        const shortenFactor = 24; // Adjust this value to control arrow shortening
+        const shortenFactor = 24;
         const x2 = target.x - (dx / length) * shortenFactor;
         const y2 = target.y - (dy / length) * shortenFactor;
 
@@ -105,7 +131,6 @@ class PetriNet extends HTMLElement {
         line.setAttribute('y2', y2);
         line.setAttribute('class', 'arc');
 
-        // Add arrowhead or inhibitor marker
         if (arc.inhibit) {
             line.setAttribute('marker-end', 'url(#markerInhibit1)');
         } else {
@@ -113,16 +138,7 @@ class PetriNet extends HTMLElement {
         }
 
         fragment.appendChild(line);
-
-        let midX = (source.x + x2) / 2;
-        let midY = (source.y + y2) / 2;
-
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', midX);
-        text.setAttribute('y', midY);
-        text.setAttribute('class', 'label');
-        text.textContent = arc.weight[0];
-        fragment.appendChild(text);
+        fragment.appendChild(this.midMarker(source, {x: x2, y: y2}, arc));
     }
 
     renderPlace(fragment, id, place) {
