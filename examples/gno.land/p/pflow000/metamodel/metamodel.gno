@@ -1,14 +1,30 @@
 package metamodel
 
 import (
-	"encoding/base64"
-	"gno.land/p/demo/ufmt"
 	"net/url"
 	"strings"
+
+	"gno.land/p/demo/ufmt"
 )
 
 // TokenType represents multiple token types as a slice of integers.
 type TokenType []int64
+
+func (tt TokenType) String() string {
+    if len(tt) == 0 {
+        return "[]"
+    }
+    var sb strings.Builder
+    sb.WriteString("[")
+    for i, v := range tt {
+        if i > 0 {
+            sb.WriteString(", ")
+        }
+        sb.WriteString(ufmt.Sprintf("%d", v))
+    }
+    sb.WriteString("]")
+    return sb.String()
+}
 
 // T creates a TokenType from a list of integers or strings.
 func T(t ...interface{}) TokenType {
@@ -22,7 +38,7 @@ func T(t ...interface{}) TokenType {
 		case string:
 			ts[i] = 1
 		default:
-			ts[i] = -1
+			ts[i] = -1 // Default to -1 for unsupported types.
 		}
 	}
 
@@ -80,6 +96,7 @@ func (model *Pflow) State() []TokenType {
 	return state
 }
 
+// TODO: try this out w/ testing
 func Execute(state []TokenType, model *Pflow, action string) ([]TokenType, bool) {
 	newState := make([]TokenType, len(state))
 	copy(newState, state)
@@ -107,64 +124,120 @@ func Execute(state []TokenType, model *Pflow, action string) ([]TokenType, bool)
 	return newState, true
 }
 
-// ToSvg renders the Petri net as an SVG.
-func (model *Pflow) ToSvg(state []TokenType) string {
-	svg := "<svg xmlns=\"http://www.w3.org/2000/svg\">"
+func (model *Pflow) ToSvg() string {
+	var sb strings.Builder
+	sb.WriteString("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"600\">\n")
 
-	// Render places.
+	// Define arrow markers
+	sb.WriteString(`
+        <defs>
+            <marker id="arrow" markerWidth="22.5" markerHeight="12" refX="9" refY="6.5" orient="auto">
+                <path d="M3,1.5 L3,12 L10.5,6 L3,1.5"/>
+            </marker>
+            <marker id="inhibit" markerWidth="30" markerHeight="16" refX="10" refY="8.5" orient="auto">
+                <circle cx="8" cy="9" r="4"/>
+            </marker>
+        </defs>
+    `)
+
+	// Draw places
 	for _, place := range model.Places {
-		svg += ufmt.Sprintf("<circle cx=\"%d\" cy=\"%d\" r=\"16\" stroke=\"black\" fill=\"white\" />", place.X, place.Y)
-		svg += ufmt.Sprintf("<text x=\"%d\" y=\"%d\" font-size=\"10\">%s</text>", place.X-20, place.Y-20, place.Label)
-
-		// Render tokens.
-		tokens := place.Tokens // FIXME
+		tokens := place.Tokens
+		sb.WriteString(ufmt.Sprintf("<circle cx=\"%d\" cy=\"%d\" r=\"20\" fill=\"black\" />\n", place.X, place.Y))
 		for i, token := range tokens {
 			if token > 0 {
-				svg += ufmt.Sprintf("<text x=\"%d\" y=\"%d\" font-size=\"10\" fill=\"black\">%d</text>", place.X+10*i, place.Y+10, token)
+				sb.WriteString(ufmt.Sprintf("<text x=\"%d\" y=\"%d\" font-size=\"12\" fill=\"white\">%d</text>\n", place.X-10+i*20, place.Y+5, token))
 			}
 		}
 	}
 
-	// Render transitions.
+	// Draw transitions
 	for _, transition := range model.Transitions {
-		svg += ufmt.Sprintf("<rect x=\"%d\" y=\"%d\" width=\"30\" height=\"30\" fill=\"white\" stroke=\"black\" />", transition.X-15, transition.Y-15)
-		svg += ufmt.Sprintf("<text x=\"%d\" y=\"%d\" font-size=\"10\">%s</text>", transition.X-20, transition.Y-20, transition.Label)
+		sb.WriteString(ufmt.Sprintf("<rect x=\"%d\" y=\"%d\" width=\"40\" height=\"20\" fill=\"gray\" />\n", transition.X, transition.Y))
 	}
 
-	// Render arcs.
-	for _, arc := range model.Arrows {
-		source := model.Places[arc.Source]
-		target := model.Transitions[arc.Target]
-		svg += ufmt.Sprintf("<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke=\"black\" marker-end=\"url(#arrow)\" />", source.X, source.Y, target.X, target.Y)
+	// Draw arrows
+	for _, arrow := range model.Arrows {
+		sourceX := model.Places[arrow.Source].X
+		sourceY := model.Places[arrow.Source].Y
+		targetX := model.Places[arrow.Target].X
+		targetY := model.Places[arrow.Target].Y
+		marker := "arrow"
+		if arrow.Inhibit {
+			marker = "inhibit"
+		}
+		sb.WriteString(ufmt.Sprintf("<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke=\"black\" marker-end=\"url(#%s)\" />\n", sourceX, sourceY, targetX, targetY, marker))
 	}
 
-	svg += "</svg>"
-	return svg
+	sb.WriteString("</svg>")
+	return sb.String()
 }
 
-// ToBase64 encodes the SVG as a base64 string.
-func (model *Pflow) ToBase64(state []TokenType) string {
-	return base64.StdEncoding.EncodeToString([]byte(model.ToSvg(state)))
+func (model *Pflow) ToDataUrl() string {
+	return "data:image/svg+xml;utf8," + url.PathEscape(model.ToSvg())
 }
 
-func (model *Pflow) ToDataUrl(state []TokenType) string {
-	return "data:image/svg+xml;utf8," + url.PathEscape(model.ToSvg(state))
+func (model *Pflow) ToGnoMark() string {
+	var sb strings.Builder
+	sb.WriteString("{\n")
+	sb.WriteString(`  "gnoMark": "petrinet",` + "\n")
+	sb.WriteString(`  "petrinet": ` + model.ToJson() + "\n")
+	sb.WriteString("}")
+	return sb.String()
 }
 
-// ToLinkMarkdown generates a markdown link to the SVG image.
-func (model *Pflow) ToLinkMarkdown(state []TokenType) string {
-	return ufmt.Sprintf("![Petri-net](https://pflow.dev/img/b=%s)", model.ToBase64(state))
+func (model *Pflow) ToJson() string {
+	var sb strings.Builder
+	sb.WriteString("{\n")
+	sb.WriteString(`  "modelType": "PetriNet",` + "\n")
+	sb.WriteString(`  "version": "v1",` + "\n")
+	sb.WriteString(`  "tokens": ["black"],` + "\n")
+	sb.WriteString(`  "places": {` + "\n")
+	placeCount := len(model.Places)
+	i := 0
+	for label, place := range model.Places {
+		sb.WriteString(ufmt.Sprintf(`    "%s": { "offset": %d, "initial": %v, "capacity": %v, "x": %d, "y": %d }`,
+			label, place.Offset, place.Initial, place.Capacity, place.X, place.Y))
+		if i < placeCount-1 {
+			sb.WriteString(",\n")
+		} else {
+			sb.WriteString("\n")
+		}
+		i++
+	}
+	sb.WriteString("  },\n")
+	sb.WriteString("  \"transitions\": {\n")
+	transitionCount := len(model.Transitions)
+	i = 0
+	for label, transition := range model.Transitions {
+		sb.WriteString(ufmt.Sprintf(`    "%s": { "x": %d, "y": %d }`,
+			label, transition.X, transition.Y))
+		if i < transitionCount-1 {
+			sb.WriteString(",\n")
+		} else {
+			sb.WriteString("\n")
+		}
+		i++
+	}
+	sb.WriteString("  },\n")
+	sb.WriteString("  \"arcs\": [\n")
+	for i, arc := range model.Arrows {
+		sb.WriteString(ufmt.Sprintf(`    { "source": "%s", "target": "%s", "weight": %v`,
+			arc.Source, arc.Target, arc.Weight))
+		if arc.Inhibit {
+			sb.WriteString(", \"inhibit\": true")
+		}
+		sb.WriteString(" }")
+		if i < len(model.Arrows)-1 {
+			sb.WriteString(",\n")
+		} else {
+			sb.WriteString("\n")
+		}
+	}
+	sb.WriteString("  ]\n")
+	sb.WriteString("}")
+	return sb.String()
 }
-
-// ToImageMarkdown generates a markdown image link to the SVG image.
-func (model *Pflow) ToImageMarkdown(state []TokenType) string {
-	return ufmt.Sprintf("![Petri-net](https://pflow.dev/img/b=%s)", model.ToBase64(state))
-}
-
-func (model *Pflow) ToJson(state []TokenType) string {
-	return "{}"
-}
-
 type WebHost struct {
 	Base string
 	Tag  string
@@ -175,19 +248,15 @@ func (h *WebHost) Cdn() string {
 	return h.Base + h.Tag + h.Path
 }
 
+type SourceProvider = func(path string) string
+
 func templateHtml(key, value string, s SourceProvider, path string) (out string) {
 	out = strings.ReplaceAll(htmlContent, key, value)
 	return strings.ReplaceAll(out, "{SOURCE}", s(path))
 }
 
 func Html(w *WebHost, s SourceProvider, path string) string {
-	return templateHtml("{CDN}", w.Cdn(), s , path)
-}
-
-type SourceProvider = func(path string) string
-
-func DataUrl(w *WebHost, s SourceProvider, path string) string {
-	return "data:text/html;utf8," + url.PathEscape(Html(w, s, path))
+	return templateHtml("{CDN}", w.Cdn(), s, path)
 }
 
 var htmlContent = `
@@ -196,35 +265,13 @@ var htmlContent = `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>pflow | model.svg</title>
-    <style type="text/css">
-        @import url("{CDN}pflow.css");
-    </style>
+    <title>pflow | metamodel</title>
 </head>
 <body>
-    <a href="https://pflow.xyz" >
-        <img src="{CDN}title.svg" alt="pflow logo" id="title" />
-    </a>
-    <svg id="svgCanvas" width="100%" height="100%"  xmlns="http://www.w3.org/2000/svg">
-        <foreignObject height="100%" width="100%" x="0" y="0">
-            <object id="svgObject" type="image/svg+xml" data="{CDN}model.svg"></object>
-        </foreignObject>
-        <g id="toolbar">
-            <g id="status" transform="translate(5, 607)" >
-                <rect x="0" y="0" width="140" height="20" fill="#fff" rx="5" ry="5"/>
-                <text x="10" y="15">Status: Ready</text>
-            </g>
-            <g id="playBtn" transform="translate(148, 604)" >
-                <circle cx="12" cy="11" r="20" fill="transparent" stroke="transparent" stroke-width="2" />
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m-2.5-3.5 7-4.5-7-4.5z"></path>
-            </g>
-        </g>
-        <g id="history" transform="translate(5, 605)" ></g>
-        <foreignObject height="50%" width="98%" x="0" y="635">
-            <textarea id="source">{SOURCE}</textarea>
-        </foreignObject>
-    </svg>
-    <script src="{CDN}pflow.js"></script>
+    <petri-net>
+    {SOURCE}
+    </petri-net>
+    <script src="{CDN}petri-net.js"></script>
 </body>
 </html>
 `

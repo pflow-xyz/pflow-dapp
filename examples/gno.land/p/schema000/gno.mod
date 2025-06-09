@@ -1,0 +1,1 @@
+module "gno.land/p/schema000"

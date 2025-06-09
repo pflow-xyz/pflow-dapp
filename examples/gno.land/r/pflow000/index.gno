@@ -1,13 +1,13 @@
 package pflow
 
 import (
-    "strings"
+	"strings"
 )
 
 func Render(path string) string {
-    if strings.HasSuffix(path, "model") {
-        return RenderExample(path)
-    }
+	if strings.HasSuffix(path, "model") {
+		return RenderExample(path)
+	}
 	return "## gno.pflow.dev\n ![profile](http://stackdump.com/profile.jpg)" + "\n\n" +
 		welcomeMessage
 }

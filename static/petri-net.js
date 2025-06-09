@@ -50,10 +50,10 @@ class PetriNet extends HTMLElement {
         // Re-add <defs> section
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         defs.innerHTML = `
-            <marker id="markerArrow1" markerWidth="22.5" markerHeight="12" refX="9" refY="6.5" orient="auto">
+            <marker id="arrow" markerWidth="22.5" markerHeight="12" refX="9" refY="6.5" orient="auto">
                 <path d="M3,1.5 L3,12 L10.5,6 L3,1.5"/>
             </marker>
-            <marker id="markerInhibit1" markerWidth="30" markerHeight="16" refX="10" refY="8.5" orient="auto">
+            <marker id="inhibit" markerWidth="30" markerHeight="16" refX="10" refY="8.5" orient="auto">
                 <circle cx="8" cy="9" r="4"/>
             </marker>
         `;
@@ -132,9 +132,9 @@ class PetriNet extends HTMLElement {
         line.setAttribute('class', 'arc');
 
         if (arc.inhibit) {
-            line.setAttribute('marker-end', 'url(#markerInhibit1)');
+            line.setAttribute('marker-end', 'url(#inhibit)');
         } else {
-            line.setAttribute('marker-end', 'url(#markerArrow1)');
+            line.setAttribute('marker-end', 'url(#arrow)');
         }
 
         fragment.appendChild(line);
@@ -175,4 +175,6 @@ class PetriNet extends HTMLElement {
     }
 }
 
-customElements.define('petri-net', PetriNet);
+if (!customElements.get('petri-net')) {
+    customElements.define('petri-net', PetriNet);
+}
