@@ -43,3 +43,9 @@ func Poll(fromAddress string, amount int64, choices ...string) {
 	// TODO: implement state handling for polls
 	_ = m
 }
+
+// show the poll using SVG button choices inside a GnoMark code block
+func PollGnoMark(fromAddress string, amount int64, choices ...string) string {
+    p := poll(fromAddress, "VOTE", choices...)
+    return "```gnomark\n" + p.ToGnoMark() + "\n```"
+}
