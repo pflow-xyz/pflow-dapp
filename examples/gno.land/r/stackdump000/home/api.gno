@@ -35,7 +35,6 @@ func Register(key string, block ContentBlock) {
 func register(key string, block ContentBlock) {
 	if _, ok := registry.Get(key); ok {
 		// TODO emit update event
-		//panic("Key already registered: " + key)
 	}
 	registry.Set(key, block)
 }
@@ -63,7 +62,9 @@ func Render(path string) string {
 	sb := strings.Builder{}
 	for _, key := range displayPaths {
 		if block, ok := registry.Get(key); ok {
+		    sb.WriteString("### "+key+"\n")
 			sb.WriteString(block.(ContentBlock)(path))
+			// TODO: also render TermSet
 			sb.WriteString("\n")
 		}
 	}

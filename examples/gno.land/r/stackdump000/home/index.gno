@@ -8,10 +8,10 @@ var (
 	registry         = avl.NewTree()
 	realmAllowPrefix = []string{}
 	displayPaths     = []string{
-		//"exampleModelV1",
-		// "transfer",
-		//"ask",
-		//"bid",
+		"exampleModelV1",
+		"transfer",
+		"ask",
+		"bid",
 	    "poll",
 	}
 )

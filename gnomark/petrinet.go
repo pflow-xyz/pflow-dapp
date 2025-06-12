@@ -61,5 +61,4 @@ var petriNetTemplate = `
     <petri-net>
 		{SOURCE}
     </petri-net>
-    <script src="{CDN}petri-net.js"></script>
 `

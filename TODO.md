@@ -16,6 +16,7 @@ WIP
   - [ ] output properly colorized i.e. should indicate active/inactive inhibited txns
   - [ ] update to support rendering > 1 petri-net in each page i.e. multiple codefences in a single markdown file
  
+- [ ] extend frame format to include TermSets and/or other json+ld structures for each model
 
 BACKLOG
 -------
