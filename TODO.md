@@ -28,12 +28,6 @@ BACKLOG
   - [ ] swap contract
 
 
-DONE
-----
-- [x] build a set of object factories that compose petri-nets for users
-  - [x] transfer model
-  - [x] polling / votes
-
 ICEBOX
 ------
 - [ ] consider adding an animation mode - could use CSS animations to show transitions

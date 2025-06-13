@@ -7,26 +7,24 @@ import (
 	"gno.land/p/demo/ufmt"
 )
 
-// TokenType represents multiple token types as a slice of integers.
 type TokenType []int64
 
 func (tt TokenType) String() string {
-    if len(tt) == 0 {
-        return "[]"
-    }
-    var sb strings.Builder
-    sb.WriteString("[")
-    for i, v := range tt {
-        if i > 0 {
-            sb.WriteString(", ")
-        }
-        sb.WriteString(ufmt.Sprintf("%d", v))
-    }
-    sb.WriteString("]")
-    return sb.String()
+	if len(tt) == 0 {
+		return "[]"
+	}
+	var sb strings.Builder
+	sb.WriteString("[")
+	for i, v := range tt {
+		if i > 0 {
+			sb.WriteString(", ")
+		}
+		sb.WriteString(ufmt.Sprintf("%d", v))
+	}
+	sb.WriteString("]")
+	return sb.String()
 }
 
-// T creates a TokenType from a list of integers or strings.
 func T(t ...interface{}) TokenType {
 	ts := make(TokenType, len(t))
 	for i, v := range t {
@@ -38,14 +36,12 @@ func T(t ...interface{}) TokenType {
 		case string:
 			ts[i] = 1
 		default:
-			ts[i] = -1 // Default to -1 for unsupported types.
+			ts[i] = -1
 		}
 	}
-
 	return ts
 }
 
-// S creates a TokenType state vector from a list of TokenType.
 func S(ts ...interface{}) []TokenType {
 	state := make([]TokenType, len(ts))
 	for i, v := range ts {
@@ -54,38 +50,83 @@ func S(ts ...interface{}) []TokenType {
 	return state
 }
 
-// Place represents a place in the Petri net.
+type Token struct {
+	Type         string
+	Name         string
+	Ticker       string
+	Denomination string
+	Value        int64
+}
+
 type Place struct {
-	Label    string    // Label of the place.
-	Offset   int       // Offset of the place in the Petri net.
-	Tokens   TokenType // Current number of tokens for each type.
-	Initial  TokenType // Initial number of tokens for each type.
-	Capacity TokenType // Maximum capacity for each token type (0 = unlimited).
-	X        int       // X coordinate of the place.
-	Y        int       // Y coordinate of the place.
+	ID          string
+	Type        string
+	Name        string
+	Identifier  string
+	Description string
+	Offset      int
+	Initial     []int
+	Capacity    []int
+	X           int
+	Y           int
+	Token       Token
+	Tokens      TokenType
 }
 
-// Arrow represents an arc in the Petri net.
-type Arrow struct {
-	Source  string    // Source place or transition.
-	Target  string    // Target place or transition.
-	Weight  TokenType // Weight for each token type.
-	Inhibit bool      // Indicates if the arc inhibits the transition.
+type Agent struct {
+	Type string
+	Name string
 }
 
-// Transition represents a transition in the Petri net.
+type Action struct {
+	Type        string
+	Agent       Agent
+	Object      Token
+	Recipient   Place
+	Description string
+}
+
 type Transition struct {
-	Label  string // Label of the transition.
-	Offset int    // Offset of the transition in the Petri net.
-	X      int    // X coordinate of the transition.
-	Y      int    // Y coordinate of the transition.
+	ID     string
+	Type   string
+	X      int
+	Y      int
+	Action Action
 }
 
-// Pflow represents a Petri net model.
+type Weight struct {
+	Type  string
+	Name  string
+	Value int64
+}
+
+type Arrow struct {
+	Type              string
+	Name              string
+	Description       string
+	ArcType           string
+	Function          string
+	Source            map[string]string
+	Target            map[string]string
+	InhibitTransition bool
+	Weight            []Weight
+}
+
+type PetriNet struct {
+	Context     string
+	Type        string
+	ModelType   string
+	Version     string
+	Tokens      []string
+	Places      map[string]Place
+	Transitions map[string]Transition
+	Arcs        []Arrow
+}
+
 type Pflow struct {
-	Places      map[string]Place      // Map of places.
-	Transitions map[string]Transition // Map of transitions.
-	Arrows      []Arrow               // List of arcs.
+	Places      map[string]Place
+	Transitions map[string]Transition
+	Arrows      []Arrow
 }
 
 func (model *Pflow) State() []TokenType {
@@ -96,26 +137,169 @@ func (model *Pflow) State() []TokenType {
 	return state
 }
 
-// TODO: try this out w/ testing
+type MetaModel interface {
+	Svg(string) string
+	DataUrl(string) string
+	Json(string) string
+	GnoMark(string) string
+}
+
+type Model struct {
+	ModelType   string
+	Version     string
+	Tokens      []string
+	Places      map[string]Place
+	Transitions map[string]Transition
+	Arcs        []Arrow
+}
+
+func Schema() string {
+	return schema
+}
+
+var schema = `
+{
+  "@context": "https://pflow.yz/schema",
+  "@type": "PetriNet",
+  "modelType": "PetriNet",
+  "version": "v1",
+  "tokens": ["black"],
+  "places": {
+    "place0": {
+      "@id": "place0",
+      "@type": "Place",
+      "name": "User Wallet",
+      "identifier": "place0",
+      "description": "Holds user balance in native token",
+      "offset": 0,
+      "initial": [1],
+      "capacity": [3],
+      "x": 130,
+      "y": 207,
+      "token": {
+        "@type": "PropertyValue",
+        "name": "Token",
+        "ticker": "ATOM",
+        "denomination": "uatom"
+      }
+    }
+  },
+  "transitions": {
+    "txn1": {
+      "@id": "txn1",
+      "@type": "Transition",
+      "x": 227,
+      "y": 112,
+      "action": {
+        "@type": "TransferAction",
+        "agent": {
+          "@type": "Person",
+          "name": "System"
+        },
+        "object": {
+          "@type": "PropertyValue",
+          "name": "Token",
+          "value": 3
+        },
+        "recipient": {
+          "@type": "Place",
+          "name": "place0"
+        },
+        "description": "System transfers 3 tokens to place0"
+      }
+    }
+  },
+  "arcs": [
+    {
+      "@type": "Arrow",
+      "name": "Consumption Arc",
+      "description": "Consumes 1 token from txn0 to place0",
+      "source": { "@id": "txn0" },
+      "target": { "@id": "place0" },
+      "weight": [
+        {
+          "@type": "PropertyValue",
+          "name": "black",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "@type": "Arrow",
+      "name": "Forward Arc",
+      "description": "Moves 3 tokens from place0 to txn1",
+      "source": { "@id": "place0" },
+      "target": { "@id": "txn1" },
+      "weight": [
+        {
+          "@type": "PropertyValue",
+          "name": "black",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "@type": "Arrow",
+      "name": "Inhibitor Arc",
+      "description": "Prevents txn2 from firing if place0 has 3 tokens",
+      "arcType": "inhibitor",
+      "function": "disableWhenTokensPresent",
+      "source": { "@id": "txn2" },
+      "target": { "@id": "place0" },
+      "inhibitTransition": true,
+      "weight": [
+        {
+          "@type": "PropertyValue",
+          "name": "black",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "@type": "Arrow",
+      "name": "Inhibitor Arc",
+      "description": "Blocks txn3 if place0 is not empty",
+      "arcType": "inhibitor",
+      "function": "disableWhenTokensPresent",
+      "source": { "@id": "place0" },
+      "target": { "@id": "txn3" },
+      "inhibitTransition": true,
+      "weight": [
+        {
+          "@type": "PropertyValue",
+          "name": "black",
+          "value": 1
+        }
+      ]
+    }
+  ]
+}`
+
+
 func Execute(state []TokenType, model *Pflow, action string) ([]TokenType, bool) {
 	newState := make([]TokenType, len(state))
-	copy(newState, state)
+	for i := range state {
+		newState[i] = append(TokenType(nil), state[i]...)
+	}
 
 	for _, arc := range model.Arrows {
-		if arc.Target == action {
-			sourceTokens := model.Places[arc.Source].Tokens
+		srcID := arc.Source["@id"]
+		tgtID := arc.Target["@id"]
+
+		if tgtID == action {
+			src := model.Places[srcID]
 			for i, weight := range arc.Weight {
-				if sourceTokens[i] < weight {
-					return state, false // Not enough tokens.
+				if newState[src.Offset][i] < weight.Value {
+					return state, false
 				}
-				sourceTokens[i] -= weight
+				newState[src.Offset][i] -= weight.Value
 			}
-		} else if arc.Source == action {
-			targetTokens := model.Places[arc.Target].Tokens
+		} else if srcID == action {
+			tgt := model.Places[tgtID]
 			for i, weight := range arc.Weight {
-				targetTokens[i] += weight
-				if model.Places[arc.Target].Capacity[i] > 0 && targetTokens[i] > model.Places[arc.Target].Capacity[i] {
-					return state, false // Exceeds capacity.
+				newState[tgt.Offset][i] += weight.Value
+				if tgt.Capacity[i] > 0 && newState[tgt.Offset][i] > int64(tgt.Capacity[i]) {
+					return state, false
 				}
 			}
 		}
@@ -127,8 +311,6 @@ func Execute(state []TokenType, model *Pflow, action string) ([]TokenType, bool)
 func (model *Pflow) ToSvg() string {
 	var sb strings.Builder
 	sb.WriteString("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"600\">\n")
-
-	// Define arrow markers
 	sb.WriteString(`
         <defs>
             <marker id="arrow" markerWidth="22.5" markerHeight="12" refX="9" refY="6.5" orient="auto">
@@ -140,7 +322,6 @@ func (model *Pflow) ToSvg() string {
         </defs>
     `)
 
-	// Draw places
 	for _, place := range model.Places {
 		tokens := place.Tokens
 		sb.WriteString(ufmt.Sprintf("<circle cx=\"%d\" cy=\"%d\" r=\"20\" fill=\"black\" />\n", place.X, place.Y))
@@ -151,22 +332,19 @@ func (model *Pflow) ToSvg() string {
 		}
 	}
 
-	// Draw transitions
 	for _, transition := range model.Transitions {
 		sb.WriteString(ufmt.Sprintf("<rect x=\"%d\" y=\"%d\" width=\"40\" height=\"20\" fill=\"gray\" />\n", transition.X, transition.Y))
 	}
 
-	// Draw arrows
 	for _, arrow := range model.Arrows {
-		sourceX := model.Places[arrow.Source].X
-		sourceY := model.Places[arrow.Source].Y
-		targetX := model.Places[arrow.Target].X
-		targetY := model.Places[arrow.Target].Y
+		src := model.Places[arrow.Source["@id"]]
+		tgt := model.Places[arrow.Target["@id"]]
 		marker := "arrow"
-		if arrow.Inhibit {
+		if arrow.InhibitTransition {
 			marker = "inhibit"
 		}
-		sb.WriteString(ufmt.Sprintf("<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke=\"black\" marker-end=\"url(#%s)\" />\n", sourceX, sourceY, targetX, targetY, marker))
+		sb.WriteString(ufmt.Sprintf("<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke=\"black\" marker-end=\"url(#%s)\" />\n",
+			src.X, src.Y, tgt.X, tgt.Y, marker))
 	}
 
 	sb.WriteString("</svg>")
@@ -223,8 +401,8 @@ func (model *Pflow) ToJson() string {
 	sb.WriteString("  \"arcs\": [\n")
 	for i, arc := range model.Arrows {
 		sb.WriteString(ufmt.Sprintf(`    { "source": "%s", "target": "%s", "weight": %v`,
-			arc.Source, arc.Target, arc.Weight))
-		if arc.Inhibit {
+			arc.Source["@id"], arc.Target["@id"], arc.Weight))
+		if arc.InhibitTransition {
 			sb.WriteString(", \"inhibit\": true")
 		}
 		sb.WriteString(" }")
@@ -238,6 +416,7 @@ func (model *Pflow) ToJson() string {
 	sb.WriteString("}")
 	return sb.String()
 }
+
 type WebHost struct {
 	Base string
 	Tag  string
@@ -250,8 +429,8 @@ func (h *WebHost) Cdn() string {
 
 type SourceProvider = func(path string) string
 
-func templateHtml(key, value string, s SourceProvider, path string) (out string) {
-	out = strings.ReplaceAll(htmlContent, key, value)
+func templateHtml(key, value string, s SourceProvider, path string) string {
+	out := strings.ReplaceAll(htmlContent, key, value)
 	return strings.ReplaceAll(out, "{SOURCE}", s(path))
 }
 

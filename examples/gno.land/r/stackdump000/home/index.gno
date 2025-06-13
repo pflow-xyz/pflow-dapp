@@ -19,4 +19,3 @@ var (
 func init() {
 	allowPatchesFromSubRealms()
 }
-
