@@ -1,0 +1,116 @@
+{
+  "@context": "https://pflow.yz/schema",
+  "@type": "PetriNet",
+  "modelType": "PetriNet",
+  "version": "v1",
+  "tokens": ["black"],
+  "places": {
+    "place0": {
+      "@id": "place0",
+      "@type": "Place",
+      "name": "User Wallet",
+      "identifier": "place0",
+      "description": "Holds user balance in native token",
+      "offset": 0,
+      "initial": [1],
+      "capacity": [3],
+      "x": 130,
+      "y": 207,
+      "token": {
+        "@type": "PropertyValue",
+        "name": "Token",
+        "ticker": "ATOM",
+        "denomination": "uatom"
+      }
+    }
+  },
+  "transitions": {
+    "txn1": {
+      "@id": "txn1",
+      "@type": "Transition",
+      "x": 227,
+      "y": 112,
+      "action": {
+        "@type": "TransferAction",
+        "agent": {
+          "@type": "Person",
+          "name": "System"
+        },
+        "object": {
+          "@type": "PropertyValue",
+          "name": "Token",
+          "value": 3
+        },
+        "recipient": {
+          "@type": "Place",
+          "name": "place0"
+        },
+        "description": "System transfers 3 tokens to place0"
+      }
+    }
+  },
+  "arcs": [
+    {
+      "@type": "Arrow",
+      "name": "Consumption Arc",
+      "description": "Consumes 1 token from txn0 to place0",
+      "source": { "@id": "txn0" },
+      "target": { "@id": "place0" },
+      "weight": [
+        {
+          "@type": "PropertyValue",
+          "name": "black",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "@type": "Arrow",
+      "name": "Forward Arc",
+      "description": "Moves 3 tokens from place0 to txn1",
+      "source": { "@id": "place0" },
+      "target": { "@id": "txn1" },
+      "weight": [
+        {
+          "@type": "PropertyValue",
+          "name": "black",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "@type": "Arrow",
+      "name": "Inhibitor Arc",
+      "description": "Prevents txn2 from firing if place0 has 3 tokens",
+      "arcType": "inhibitor",
+      "function": "disableWhenTokensPresent",
+      "source": { "@id": "txn2" },
+      "target": { "@id": "place0" },
+      "inhibitTransition": true,
+      "weight": [
+        {
+          "@type": "PropertyValue",
+          "name": "black",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "@type": "Arrow",
+      "name": "Inhibitor Arc",
+      "description": "Blocks txn3 if place0 is not empty",
+      "arcType": "inhibitor",
+      "function": "disableWhenTokensPresent",
+      "source": { "@id": "place0" },
+      "target": { "@id": "txn3" },
+      "inhibitTransition": true,
+      "weight": [
+        {
+          "@type": "PropertyValue",
+          "name": "black",
+          "value": 1
+        }
+      ]
+    }
+  ]
+}
